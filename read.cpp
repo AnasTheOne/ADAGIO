@@ -8,7 +8,7 @@ using namespace std;
 
 
 int read(char* name) {
-  string repertory = "../../Mesh/";
+  string repertory = "../Mesh/";
   float* res;
   int* stop ;
   char char_array[255];
