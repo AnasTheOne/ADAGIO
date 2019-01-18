@@ -1,4 +1,6 @@
 #include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
 #include <chrono>
 #include <list>
 #include <fstream>
@@ -36,8 +38,12 @@ int main(int argc, char** argv)
   QApplication application(argc,argv);
   Viewer3D<> viewer;
   viewer.show();
-
-
+  char* nom = (char*)malloc(100);
+  sprintf(nom,"../../Mesh/");
+  sprintf(nom+11,argv[1]);
+  sprintf(nom+11+strlen(argv[1])-4,argv[2]);
+  sprintf(nom+11+strlen(argv[1])-4+strlen(argv[2]),".txt");
+  ofstream Vol(nom);
 
   //viewer.addLine(RealPoint(p1[0],p1[1],p1[2]),RealPoint(p2[0],p2[1],p2[2]), 1);
 
@@ -126,12 +132,15 @@ int main(int argc, char** argv)
   auto duration = duration_cast<seconds>( t2 - t1 ).count();
   cout << voxels.size() << " voxels" <<  endl;
   cout << "executed in " << duration/60 << " min "<< duration % 60 << " s" << endl;
-  for (auto voxel = voxels.begin(); voxel != voxels.end(); ++voxel) viewer.addCube(RealPoint((*voxel)[0], (*voxel)[1], (*voxel)[2]),0.5);
+  for (auto voxel = voxels.begin(); voxel != voxels.end(); ++voxel) {
+    viewer.addCube(RealPoint((*voxel)[0], (*voxel)[1], (*voxel)[2]),1);
+    Vol << (*voxel)[0]<< " " << (*voxel)[1] << " " << (*voxel)[2] << endl;
+  }
   //
   //
   //
 
-
+  Vol.close();
   viewer.setLineColor(Color(0,0,0,50));
   viewer << aMesh;
   viewer << Viewer3D<>::updateDisplay;
