@@ -301,6 +301,9 @@ int main(int argc, char** argv)
     float pourc = stof(coord);
     vector<array<int,3>> Points;
     vector<array<int,8>> Vertices;
+    vector<RealPoint> vertex;
+    vector<array<int,3>> faces;
+
 
     vector<int> cubeIndexs;
     int cubeIndex = 0;
@@ -381,11 +384,12 @@ int main(int argc, char** argv)
         array<RealPoint,12> edges;
 
 
+
         int i = 0;
         for (auto &poi:volume) {
-            x = poi[0];
-            y = poi[1];
-            z = poi[2];
+            x = (int) poi[0];
+            y = (int) poi[1];
+            z = (int) poi[2];
             cout << "(" << ++i << "\t/\t" << taille << ")" << endl;
             cubeIndex = 0;
             if (cherche3(Points,{x + 1,y,z})) cubeIndex |= 1;
@@ -415,6 +419,11 @@ int main(int argc, char** argv)
                 tri3 = table[cubeIndex][a + 2];
                 viewer.addTriangle(edges[tri1],edges[tri2],edges[tri3]);
 
+                int id1 = 0;while(id1 < vertex.size() && vertex[id1]!=edges[tri1]){id1++;} if ( vertex.size() == id1){ vertex.push_back(edges[tri1]);}
+                int id2 = 0;while(id2 < vertex.size() && vertex[id2]!=edges[tri2]){id2++;} if ( vertex.size() == id2){ vertex.push_back(edges[tri2]);}
+                int id3 = 0;while(id3 < vertex.size() && vertex[id3]!=edges[tri3]){id3++;} if ( vertex.size() == id3){ vertex.push_back(edges[tri3]);}
+                faces.push_back({id1,id2,id3});
+
             }
 
         }
@@ -425,6 +434,20 @@ int main(int argc, char** argv)
         cout << "failed to open the file" << endl;
         return -1;
     }
+    sprintf(nom+11,argv[1]);
+    sprintf(nom+11+strlen(argv[1])-4,"Marching.off");
+    ofstream outFile(nom);
+    outFile << "OFF" <<"\n";
+    outFile << vertex.size() << " " << faces.size() << " " << 0 <<endl;
+    for (auto &poi :vertex){ outFile << 1.0*poi[0] << " " << 1.0*poi[1] << " " << 1.0*poi[2] <<  endl;}
+
+    /*
+    double p0,p1,p2;
+    for (auto &poi :vertex){ p0 = (double) poi[0];p1 = (double) poi[1];p2 = (double) poi[2];outFile << p0 << " " << p1 << " " << p2 <<  endl;}
+    */
+
+    for (auto &face:faces ){ outFile << 3 << " " << face[0] << " " << face[1] << " " << face[2] <<  endl;}
+    outFile.close();
     viewer.setLineColor(Color(0,0,0,50));
     viewer << aMesh;
     viewer << Viewer3D<>::updateDisplay;
