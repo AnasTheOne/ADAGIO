@@ -94,6 +94,13 @@ bool cherche3(vector<array<int,3>> Points, array<int,3> target){
     return false;
 }
 
+bool chercheGrille(array<array<int,3>,8> Points, array<int,3> target){
+    for(auto &point:Points){
+        if(point == target) return true;
+    }
+    return false;
+}
+
 bool cherche8(vector<array<int,8>> Points, array<int,8> target){
     for(auto &point:Points){
         if(point == target) return true;
@@ -102,10 +109,12 @@ bool cherche8(vector<array<int,8>> Points, array<int,8> target){
 }
 
 RealPoint IntersPoint(array<int,3> P1,array<int,3> P2,double alpha){
+    return RealPoint(P1[0]+alpha*(P2[0]-P1[0]),P1[1]+alpha*(P2[1]-P1[1]),P1[2]+alpha*(P2[2]-P1[2]));
+    /*
     if(norm({(double) P1[0],(double) P1[1],(double) P1[2]})==norm({(double) P2[0],(double) P2[1],(double) P2[2]})) return {(double) P1[0],(double) P1[1],(double) P1[2]};
     else {
         double mu = (alpha -norm({(double) P1[0],(double) P1[1],(double) P1[2]}))/(norm({(double) P2[0],(double) P2[1],(double) P2[2]})-norm({(double) P1[0],(double) P1[1],(double) P1[2]}));
         return RealPoint(P1[0]+mu*(P2[0]-P1[0]),P1[1]+mu*(P2[1]-P1[1]),P1[2]+mu*(P2[2]-P1[2]));
-    }
+    }*/
 }
 

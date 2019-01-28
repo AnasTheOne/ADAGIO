@@ -1,5 +1,5 @@
 #include "prog.h"
-int edges[256]={
+int edgeTable[256]={
         0x0  , 0x109, 0x203, 0x30a, 0x406, 0x50f, 0x605, 0x70c,
         0x80c, 0x905, 0xa0f, 0xb06, 0xc0a, 0xd03, 0xe09, 0xf00,
         0x190, 0x99 , 0x393, 0x29a, 0x596, 0x49f, 0x795, 0x69c,
@@ -381,7 +381,8 @@ int main(int argc, char** argv)
 
         int x,y,z;
         int tri1,tri2,tri3;
-        array<RealPoint,12> edges;
+        array<RealPoint,12> inters;
+        array<array<int,3>,8> grille;
 
 
 
@@ -391,37 +392,64 @@ int main(int argc, char** argv)
             y = (int) poi[1];
             z = (int) poi[2];
             cout << "(" << ++i << "\t/\t" << taille << ")" << endl;
-            cubeIndex = 0;
-            if (cherche3(Points,{x + 1,y,z})) cubeIndex |= 1;
-            if (cherche3(Points,{x + 1,y + 1,z})) cubeIndex |= 2;
-            if (cherche3(Points,{x,y + 1,z})) cubeIndex |= 4;
-            if (cherche3(Points,{x,y,z})) cubeIndex |= 8;
-            if (cherche3(Points,{x + 1,y,z + 1})) cubeIndex |= 16;
-            if (cherche3(Points,{x + 1,y + 1,z + 1})) cubeIndex |= 32;
-            if (cherche3(Points,{x,y + 1,z + 1})) cubeIndex |= 64;
-            if (cherche3(Points,{x,y,z + 1})) cubeIndex |= 128;
 
-            edges[0] = IntersPoint({x + 1,y,z},{x + 1,y + 1,z},pourc);
-            edges[1] = IntersPoint({x + 1,y + 1,z},{x,y + 1,z},pourc);
-            edges[2] = IntersPoint({x,y + 1,z},{x,y,z},pourc);
-            edges[3] = IntersPoint({x,y,z},{x + 1,y,z},pourc);
-            edges[4] = IntersPoint({x + 1,y,z + 1},{x + 1,y + 1,z + 1},pourc);
-            edges[5] = IntersPoint({x + 1,y + 1,z + 1},{x,y + 1,z + 1},pourc);
-            edges[6] = IntersPoint({x,y + 1,z + 1},{x,y,z + 1},pourc);
-            edges[7] = IntersPoint({x,y,z + 1},{x + 1,y,z + 1},pourc);
-            edges[8] = IntersPoint({x + 1,y,z + 1},{x + 1,y,z},pourc);
-            edges[9] = IntersPoint({x + 1,y + 1,z + 1},{x + 1,y + 1,z},pourc);
-            edges[10] = IntersPoint({x,y + 1,z},{x,y + 1,z + 1},pourc);
-            edges[11] = IntersPoint({x,y,z},{x,y,z + 1},pourc);
+            grille[0]={x + 1,y,z};
+            grille[1]={x + 1,y + 1,z};
+            grille[2]={x,y + 1,z};
+            grille[3]={x,y,z};
+            grille[4]={x + 1,y,z + 1};
+            grille[5]={x + 1,y + 1,z + 1};
+            grille[6]={x,y + 1,z + 1};
+            grille[7]={x,y,z + 1};
+
+            cubeIndex = 0;
+            if (cherche3(Points,grille[0])) cubeIndex |= 1;
+            if (cherche3(Points,grille[1])) cubeIndex |= 2;
+            if (cherche3(Points,grille[2])) cubeIndex |= 4;
+            if (cherche3(Points,grille[3])) cubeIndex |= 8;
+            if (cherche3(Points,grille[4])) cubeIndex |= 16;
+            if (cherche3(Points,grille[5])) cubeIndex |= 32;
+            if (cherche3(Points,grille[6])) cubeIndex |= 64;
+            if (cherche3(Points,grille[7])) cubeIndex |= 128;
+            /*
+            if(i==23) {
+                cout << 0 << "::\t" << grille[0][0] << "\t" << grille[0][1] << "\t" << grille[0][2] << "\n";
+                cout << 1 << "::\t" << grille[1][0] << "\t" << grille[1][1] << "\t" << grille[1][2] << "\n";
+                cout << 2 << "::\t" << grille[2][0] << "\t" << grille[2][1] << "\t" << grille[2][2] << "\n";
+                cout << 3 << "::\t" << grille[3][0] << "\t" << grille[3][1] << "\t" << grille[3][2] << "\n";
+                cout << 4 << "::\t" << grille[4][0] << "\t" << grille[4][1] << "\t" << grille[4][2] << "\n";
+                cout << 5 << "::\t" << grille[5][0] << "\t" << grille[5][1] << "\t" << grille[5][2] << "\n";
+                cout << 6 << "::\t" << grille[6][0] << "\t" << grille[6][1] << "\t" << grille[6][2] << "\n";
+                cout << 7 << "::\t" << grille[7][0] << "\t" << grille[7][1] << "\t" << grille[7][2] << "\n";
+            }
+            */
+            if (edgeTable[cubeIndex] & 1) inters[0] = IntersPoint(grille[0],grille[1],cherche3(Points,grille[1])?1-pourc:pourc);
+            if (edgeTable[cubeIndex] & 2) inters[1] = IntersPoint(grille[1],grille[2],cherche3(Points,grille[2])?1-pourc:pourc);
+            if (edgeTable[cubeIndex] & 4) inters[2] = IntersPoint(grille[2],grille[3],cherche3(Points,grille[3])?1-pourc:pourc);
+            if (edgeTable[cubeIndex] & 8) inters[3] = IntersPoint(grille[3],grille[0],cherche3(Points,grille[0])?1-pourc:pourc);
+            if (edgeTable[cubeIndex] & 16) inters[4] = IntersPoint(grille[4],grille[5],cherche3(Points,grille[5])?1-pourc:pourc);
+            if (edgeTable[cubeIndex] & 32) inters[5] = IntersPoint(grille[5],grille[6],cherche3(Points,grille[6])?1-pourc:pourc);
+            if (edgeTable[cubeIndex] & 64) inters[6] = IntersPoint(grille[6],grille[7],cherche3(Points,grille[7])?1-pourc:pourc);
+            if (edgeTable[cubeIndex] & 128) inters[7] = IntersPoint(grille[7],grille[4],cherche3(Points,grille[4])?1-pourc:pourc);
+            if (edgeTable[cubeIndex] & 256) inters[8] = IntersPoint(grille[0],grille[4],cherche3(Points,grille[4])?1-pourc:pourc);
+            if (edgeTable[cubeIndex] & 512) inters[9] = IntersPoint(grille[1],grille[5],cherche3(Points,grille[5])?1-pourc:pourc);
+            if (edgeTable[cubeIndex] & 1024) inters[10] = IntersPoint(grille[2],grille[6],cherche3(Points,grille[6])?1-pourc:pourc);
+            if (edgeTable[cubeIndex] & 2048) inters[11] = IntersPoint(grille[3],grille[7],cherche3(Points,grille[7])?1-pourc:pourc);
+
             for (int a = 0; table[cubeIndex][a] != -1; a += 3) {
                 tri1 = table[cubeIndex][a];
                 tri2 = table[cubeIndex][a + 1];
                 tri3 = table[cubeIndex][a + 2];
-                viewer.addTriangle(edges[tri1],edges[tri2],edges[tri3]);
+                /* Find the vertices where the surface intersects the cube */
+                viewer.addTriangle(inters[tri1],inters[tri2],inters[tri3]);
+                cout << tri1 << "\t" << tri2 << "\t" << tri3 << "\n";
+                cout << inters[tri1][0] << "\t" << inters[tri1][1] << "\t" << inters[tri1][2] << endl;
+                cout << inters[tri2][0] << "\t" << inters[tri2][1] << "\t" << inters[tri2][2] << endl;
+                cout << inters[tri3][0] << "\t" << inters[tri3][1] << "\t" << inters[tri3][2] << endl;
 
-                int id1 = 0;while(id1 < vertex.size() && vertex[id1]!=edges[tri1]){id1++;} if ( vertex.size() == id1){ vertex.push_back(edges[tri1]);}
-                int id2 = 0;while(id2 < vertex.size() && vertex[id2]!=edges[tri2]){id2++;} if ( vertex.size() == id2){ vertex.push_back(edges[tri2]);}
-                int id3 = 0;while(id3 < vertex.size() && vertex[id3]!=edges[tri3]){id3++;} if ( vertex.size() == id3){ vertex.push_back(edges[tri3]);}
+                int id1 = 0;while(id1 < vertex.size() && vertex[id1]!=inters[tri1]){id1++;} if ( vertex.size() == id1){ vertex.push_back(inters[tri1]);}
+                int id2 = 0;while(id2 < vertex.size() && vertex[id2]!=inters[tri2]){id2++;} if ( vertex.size() == id2){ vertex.push_back(inters[tri2]);}
+                int id3 = 0;while(id3 < vertex.size() && vertex[id3]!=inters[tri3]){id3++;} if ( vertex.size() == id3){ vertex.push_back(inters[tri3]);}
                 faces.push_back({id1,id2,id3});
 
             }

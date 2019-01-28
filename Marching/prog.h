@@ -31,5 +31,6 @@ array<int,6> bordsIntegral(vector<array<int,3>> Points,int i,int j,int k);
 bool cherche3(vector<array<int,3>> Points, array<int,3> target);
 bool cherche8(vector<array<int,8>> Points, array<int,8> target);
 RealPoint IntersPoint(array<int,3> P1,array<int,3> P2,double alpha);
+bool chercheGrille(array<array<int,3>,8> Points, array<int,3> target);
 
 #endif //MARCHINGCUBE_PROG_H
