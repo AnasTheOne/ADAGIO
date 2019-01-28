@@ -442,11 +442,12 @@ int main(int argc, char** argv)
                 tri3 = table[cubeIndex][a + 2];
                 /* Find the vertices where the surface intersects the cube */
                 viewer.addTriangle(inters[tri1],inters[tri2],inters[tri3]);
+                /*
                 cout << tri1 << "\t" << tri2 << "\t" << tri3 << "\n";
                 cout << inters[tri1][0] << "\t" << inters[tri1][1] << "\t" << inters[tri1][2] << endl;
                 cout << inters[tri2][0] << "\t" << inters[tri2][1] << "\t" << inters[tri2][2] << endl;
                 cout << inters[tri3][0] << "\t" << inters[tri3][1] << "\t" << inters[tri3][2] << endl;
-
+                */
                 int id1 = 0;while(id1 < vertex.size() && vertex[id1]!=inters[tri1]){id1++;} if ( vertex.size() == id1){ vertex.push_back(inters[tri1]);}
                 int id2 = 0;while(id2 < vertex.size() && vertex[id2]!=inters[tri2]){id2++;} if ( vertex.size() == id2){ vertex.push_back(inters[tri2]);}
                 int id3 = 0;while(id3 < vertex.size() && vertex[id3]!=inters[tri3]){id3++;} if ( vertex.size() == id3){ vertex.push_back(inters[tri3]);}
